@@ -1,63 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container_main"
-    android:orientation="horizontal"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="4dp">
 
-<LinearLayout
-    android:id="@+id/left_part_container"
-    android:orientation="vertical"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:background="@color/colorAccent"
-    android:layout_weight="15">
-    <TextView
-        android:id="@+id/tv_title"
-        style="@style/PlanList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Title"
-        android:gravity="center|start"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        />
-    <TextView
-        android:id="@+id/tv_description"
-        style="@style/PlanList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="Description of plan/schedule"
-        android:gravity="center|start"
-        android:textSize="14sp"
-        />
-</LinearLayout>
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="0dp"
+        android:id="@+id/container_main"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="4">
-    <Button
-        android:id="@+id/tv_editDate"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_gravity="end|top"
-        android:layout_marginRight="1.5dp"
         android:background="@color/colorAccent"
-        android:shadowColor="@color/colorAccent"
-        android:drawableEnd="@drawable/ic_calendar"
-        />
-    <TextView
-        android:id="@+id/tv_date"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:text="25/04/2019"
-        android:layout_gravity="center"/>
+        android:orientation="horizontal"
+        android:layout_margin="4dp">
+
+        <LinearLayout
+            android:id="@+id/left_part_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="15"
+            android:background="@color/colorAccent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_title"
+                style="@style/PlanList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|start"
+                android:text="Title"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_description"
+                style="@style/PlanList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center|start"
+                android:text="Description of plan/schedule"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@+id/tv_editDate"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="end|top"
+                android:layout_marginRight="1.5dp"
+                android:layout_weight="1"
+                android:background="@color/colorAccent"
+                android:drawableEnd="@drawable/ic_calendar"
+                android:shadowColor="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center"
+                android:layout_weight="3"
+                android:text="25/04/2019" />
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</android.support.v7.widget.CardView>

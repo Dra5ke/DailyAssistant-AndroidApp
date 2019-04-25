@@ -32,7 +32,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull PlanAdapter.ViewHolder viewHolder, int position) {
         viewHolder.Title.setText(mPlans.get(position).getTitle());
         viewHolder.Description.setText(mPlans.get(position).getDescription());
-        //TODO Show Date info
+        viewHolder.date.setText(getDateInString(mPlans.get(position)));
     }
 
     @Override
@@ -43,6 +43,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
         TextView Title;
         TextView Description;
         Button editDate;
+        TextView date;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -50,6 +51,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
             Title = itemView.findViewById(R.id.tv_title);
             Description = itemView.findViewById(R.id.tv_description);
             editDate = itemView.findViewById(R.id.tv_editDate);
+            date = itemView.findViewById(R.id.tv_date);
         }
 
         @Override
@@ -60,5 +62,13 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
 
     public interface OnListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+    }
+
+    public String getDateInString(Plan plan) {
+        String date;
+
+        date = plan.getDay() + "/" + plan.getMonth() + "/" + plan.getYear();
+
+        return date;
     }
 }

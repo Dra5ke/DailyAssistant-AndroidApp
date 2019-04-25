@@ -16,6 +16,19 @@ public class Plan {
         Day = day;
     }
 
+    public String getDateString() {
+        String date;
+        String dayS;
+        String monthS;
+        if(Day < 10) dayS = "0" + Day;
+        else dayS = "" + Day;
+        if(Month < 10) monthS = "0" + Month;
+        else monthS = "" + Month;
+
+        date = dayS + "/" + monthS + "/" + Year;
+        return date;
+    }
+
     public String getTitle() {
         return title;
     }

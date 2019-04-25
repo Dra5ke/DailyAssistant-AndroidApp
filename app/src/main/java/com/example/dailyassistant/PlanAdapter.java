@@ -64,8 +64,15 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
     }
 
     public String getDateInString(Plan plan) {
-        String date;
-        date = plan.getDay() + "/" + plan.getMonth() + "/" + plan.getYear();
+        String date = "";
+        if(plan.getMonth() < 10)
+        {
+            date = plan.getDay() + "/0" + plan.getMonth() + "/" + plan.getYear();
+        }
+        else
+        {
+            date = plan.getDay() + "/" + plan.getMonth() + "/" + plan.getYear();
+        }
         return date;
     }
 }

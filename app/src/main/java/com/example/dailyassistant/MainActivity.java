@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         plans.add(new Plan("Flight Check In", "Make Check in for everyone", 2019, 5, 18));
         plans.add(new Plan("Return Check In", "Check In the return flight", 2019, 5, 19));
         plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
+        plans.add(new Plan("Syn", "Go for Syn inspectionfdghjmgfdsfghjbhvgcfxghvjbvhgcfxgcvhngc", 2019, 5, 26));
         plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
         plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
+        plans.add(new Plan("Syn", "Go for Syn inspectionasadasdsasadsadsadasdsasadsadsaddasdadassadsadsadsadadssadsaddassadsasasadsasadsadsadsadsadsasadsadsaddasasdsadsadsdsadsadadsdsdssadsadsadsd", 2019, 5, 26));
 
         return plans;
     }

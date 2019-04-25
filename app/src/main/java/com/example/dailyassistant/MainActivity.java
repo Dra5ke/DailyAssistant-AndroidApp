@@ -2,6 +2,7 @@ package com.example.dailyassistant;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     RecyclerView.Adapter mPlanAdapter;
     ArrayList<Plan> mPlans;
     int list_item_index;
+    private final int ADD_REQUEST_CODE = 5151;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,11 +52,23 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddPlan.class);
-                startActivity(intent);
+                startActivityForResult(intent, ADD_REQUEST_CODE);
             }
         });
+    }
 
-
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == ADD_REQUEST_CODE)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                mPlans.add(new Plan(data.getExtras().getString("NEW_PLAN_TITLE"),
+                        data.getExtras().getString("NEW_PLAN_DESCRIPTION"), data.getExtras().getInt("NEW_PLAN_YEAR"),
+                        data.getExtras().getInt("NEW_PLAN_MONTH"), data.getExtras().getInt("NEW_PLAN_DAY")));
+                mPlanAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override

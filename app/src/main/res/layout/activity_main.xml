@@ -14,10 +14,13 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         app:popupTheme="@style/AppTheme"
-        app:titleTextColor="#FFFFFF"
+        app:titleTextColor="@color/colorAccent"
         />
 
-
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"

@@ -5,4 +5,6 @@
     <string name="login">Login</string>
     <string name="sign_up">Sign Up</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="sign_out">SignOut</string>
+    <string name="api_user_id_google_sign_in">483260070919-a5satcn4th5e9uktqi5oqbm8nvf3mjit.apps.googleusercontent.com</string>
 </resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/container_main"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    >
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/left_half_container"
+    android:orientation="vertical"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:background="@color/colorAccent"
+    android:layout_weight="15">
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/PlanList"
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Title"
+        android:gravity="center|start"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Description of plan/schedule"
+        android:gravity="center|left"
+        android:textSize="14sp"
+        />
+</LinearLayout>
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_weight="1"
+        android:layout_gravity="end|top"
+        android:background="@color/colorAccent"
+        android:shadowColor="@color/colorAccent"
+        android:drawableEnd="@drawable/ic_calendar"
+        />
+</LinearLayout>

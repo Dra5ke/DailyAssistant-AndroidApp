@@ -6,6 +6,18 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- To change the popup menu and app text color  -->
+        <item name="android:textColor">@color/colorPrimary</item>
+
+        <!-- To change the background of options menu-->
+        <item name="android:itemBackground">@color/colorAccent</item>
+
+    </style>
+
+    <style name="PlanList">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:background">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

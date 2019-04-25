@@ -51,6 +51,19 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
             Description = itemView.findViewById(R.id.tv_description);
             editDate = itemView.findViewById(R.id.tv_editDate);
             date = itemView.findViewById(R.id.tv_date);
+
+            editDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mOnListItemClickListener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION) {
+                            mOnListItemClickListener.onCalendarClick(position);
+                        }
+                    }
+                }
+            });
         }
 
         @Override
@@ -61,6 +74,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
 
     public interface OnListItemClickListener {
         void onListItemClick(int clickedItemIndex);
+        void onCalendarClick(int clickedItemIndex);
     }
 
     public String getDateInString(Plan plan) {

@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -49,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
                 startActivity(intent);
             }
         });
+
 
     }
 
@@ -112,6 +114,11 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
     @Override
     public void onListItemClick(int clickedItemIndex) {
+
+    }
+
+    @Override
+    public void onCalendarClick(int clickedItemIndex) {
 
     }
 }

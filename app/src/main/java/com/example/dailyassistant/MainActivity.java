@@ -1,7 +1,10 @@
 package com.example.dailyassistant;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,11 +18,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements PlanAdapter.OnListItemClickListener {
 
@@ -27,12 +32,14 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     RecyclerView mPlanList;
     RecyclerView.Adapter mPlanAdapter;
     ArrayList<Plan> mPlans;
+    Date date;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        date = new Date();
         mPlans = getMockData();
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -120,10 +127,38 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onCalendarClick(int clickedItemIndex) {
-        mPlans.get(clickedItemIndex).setDay(7);
-        mPlans.get(clickedItemIndex).setMonth(7);
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener ,year, month, dayOfMonth);
+        datePickerDialog.getDatePicker().setOnDateChangedListener(mDateChangedListener);
+        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+        datePickerDialog.show();
+
+        mPlans.get(clickedItemIndex).setDay(date.getDay());
+        mPlans.get(clickedItemIndex).setMonth(date.getMonth());
+        mPlans.get(clickedItemIndex).setYear(date.getYear());
         mPlanAdapter.notifyItemChanged(clickedItemIndex);
     }
+
+    private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        }
+    };
+
+    private DatePicker.OnDateChangedListener mDateChangedListener = new DatePicker.OnDateChangedListener() {
+        @Override
+        public void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            date.setDay(dayOfMonth);
+            date.setMonth(monthOfYear+1);
+            date.setYear(year);
+        }
+    };
 }

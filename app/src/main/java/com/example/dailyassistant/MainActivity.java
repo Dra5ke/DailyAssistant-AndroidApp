@@ -26,11 +26,14 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     Toolbar myToolbar;
     RecyclerView mPlanList;
     RecyclerView.Adapter mPlanAdapter;
+    ArrayList<Plan> mPlans;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mPlans = getMockData();
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         mPlanList.hasFixedSize();
         mPlanList.setLayoutManager(new LinearLayoutManager(this));
 
-        mPlanAdapter = new PlanAdapter(getMockData(), this);
+        mPlanAdapter = new PlanAdapter(mPlans, this);
         mPlanList.setAdapter(mPlanAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -119,6 +122,8 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
     @Override
     public void onCalendarClick(int clickedItemIndex) {
-
+        mPlans.get(clickedItemIndex).setDay(7);
+        mPlans.get(clickedItemIndex).setMonth(7);
+        mPlanAdapter.notifyItemChanged(clickedItemIndex);
     }
 }

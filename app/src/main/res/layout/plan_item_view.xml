@@ -3,22 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="4dp"
+    android:background="@color/colorAccent"
+    android:backgroundTint="@color/colorAccent"
+    android:layout_margin="8dp">
 
     <LinearLayout
         android:id="@+id/container_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorAccent"
         android:orientation="horizontal"
-        android:layout_margin="4dp">
+        >
 
         <LinearLayout
             android:id="@+id/left_part_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="15"
-            android:background="@color/colorAccent"
             android:orientation="vertical">
 
             <TextView
@@ -58,10 +59,12 @@
                 android:layout_weight="1"
                 android:background="@color/colorAccent"
                 android:drawableEnd="@drawable/ic_calendar"
-                android:shadowColor="@color/colorAccent" />
+                android:shadowColor="@color/colorAccent"
+                android:shadowRadius="0"/>
 
             <TextView
                 android:id="@+id/tv_date"
+                style="@style/PlanList"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_gravity="center"

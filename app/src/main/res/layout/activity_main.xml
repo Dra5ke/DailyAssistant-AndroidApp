@@ -23,6 +23,9 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:background="@color/colorPrimaryDark"
+        android:padding="4dp"
         />
 
     <android.support.design.widget.FloatingActionButton

@@ -27,6 +27,7 @@
         />
     <TextView
         android:id="@+id/tv_description"
+        style="@style/PlanList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -35,14 +36,28 @@
         android:textSize="14sp"
         />
 </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="4">
     <Button
         android:id="@+id/tv_editDate"
-        android:layout_width="0dp"
-        android:layout_height="25dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_gravity="end|top"
+        android:layout_marginRight="1.5dp"
         android:background="@color/colorAccent"
         android:shadowColor="@color/colorAccent"
         android:drawableEnd="@drawable/ic_calendar"
         />
+    <TextView
+        android:id="@+id/tv_date"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:text="25/04/2019"
+        android:layout_gravity="center"/>
+    </LinearLayout>
 </LinearLayout>

@@ -8,16 +8,15 @@
     >
 
 <LinearLayout
-    android:id="@+id/left_half_container"
+    android:id="@+id/left_part_container"
     android:orientation="vertical"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     android:background="@color/colorAccent"
     android:layout_weight="15">
     <TextView
-        android:id="@+id/tv_title"
+        android:id="@+id/title"
         style="@style/PlanList"
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -27,6 +26,7 @@
         android:textStyle="bold"
         />
     <TextView
+        android:id="@+id/description"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -36,6 +36,7 @@
         />
 </LinearLayout>
     <Button
+        android:id="@+id/edit_date"
         android:layout_width="0dp"
         android:layout_height="25dp"
         android:layout_weight="1"

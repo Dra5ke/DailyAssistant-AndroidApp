@@ -47,7 +47,6 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
 
         ViewHolder(View itemView) {
             super(itemView);
-
             Title = itemView.findViewById(R.id.tv_title);
             Description = itemView.findViewById(R.id.tv_description);
             editDate = itemView.findViewById(R.id.tv_editDate);
@@ -66,9 +65,7 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
 
     public String getDateInString(Plan plan) {
         String date;
-
         date = plan.getDay() + "/" + plan.getMonth() + "/" + plan.getYear();
-
         return date;
     }
 }

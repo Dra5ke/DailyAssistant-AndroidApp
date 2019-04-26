@@ -2,6 +2,7 @@ package com.example.dailyassistant;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,6 +19,8 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
@@ -24,6 +29,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements PlanAdapter.OnListItemClickListener {
 
+    private static final String TAG = "Main";
     Toolbar myToolbar;
     RecyclerView mPlanList;
     RecyclerView.Adapter mPlanAdapter;
@@ -45,8 +51,22 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         mPlanList =findViewById(R.id.rv);
         mPlanList.hasFixedSize();
         mPlanList.setLayoutManager(new LinearLayoutManager(this));
-
         mPlanAdapter = new PlanAdapter(mPlans, this);
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
+                final int swipedItemIndex = (int) viewHolder.getAdapterPosition();
+                mPlans.remove(swipedItemIndex);
+                mPlanAdapter.notifyItemRemoved(swipedItemIndex);
+            }
+        }).attachToRecyclerView(mPlanList);
+
         mPlanList.setAdapter(mPlanAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

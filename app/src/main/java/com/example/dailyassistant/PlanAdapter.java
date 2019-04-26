@@ -64,6 +64,8 @@ public class PlanAdapter extends RecyclerView.Adapter<PlanAdapter.ViewHolder> {
                     }
                 }
             });
+
+            itemView.setOnClickListener(this);
         }
 
         @Override

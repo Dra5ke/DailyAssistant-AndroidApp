@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     ArrayList<Plan> mPlans;
     int list_item_index;
     private final int ADD_REQUEST_CODE = 5151;
+    private final int EDIT_REQUEST_CODE = 5252;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +69,20 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
                         data.getExtras().getString("NEW_PLAN_DESCRIPTION"), data.getExtras().getInt("NEW_PLAN_YEAR"),
                         data.getExtras().getInt("NEW_PLAN_MONTH"), data.getExtras().getInt("NEW_PLAN_DAY")));
                 mPlanAdapter.notifyDataSetChanged();
+            }
+        } else if(requestCode == EDIT_REQUEST_CODE)
+        {
+            if(resultCode == RESULT_OK)
+            {
+                int index = data.getExtras().getInt("EDIT_PLAN_INDEX");
+                String newTitle = data.getExtras().getString("EDIT_PLAN_TITLE");
+                String newDescription = data.getExtras().getString("EDIT_PLAN_DESCRIPTION");
+                if(!newTitle.equals("")) mPlans.get(index).setTitle(newTitle);
+                if(!newDescription.equals("")) mPlans.get(index).setDescription(newDescription);
+                mPlans.get(index).setDay(data.getExtras().getInt("EDIT_PLAN_DAY"));
+                mPlans.get(index).setMonth(data.getExtras().getInt("EDIT_PLAN_MONTH"));
+                mPlans.get(index).setYear(data.getExtras().getInt("EDIT_PLAN_YEAR"));
+                mPlanAdapter.notifyItemChanged(index);
             }
         }
     }
@@ -132,6 +148,9 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     @Override
     public void onListItemClick(int clickedItemIndex) {
 
+        Intent intent = new Intent(MainActivity.this, EditPlan.class);
+        intent.putExtra("clickedItemIndex", clickedItemIndex);
+        startActivityForResult(intent, EDIT_REQUEST_CODE);
     }
 
     @Override

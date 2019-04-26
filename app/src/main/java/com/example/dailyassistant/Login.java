@@ -18,6 +18,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
@@ -25,10 +27,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Login extends AppCompatActivity implements View.OnClickListener{
 
     private static final String TAG = "Login";
+    FirebaseFirestore database;
     private EditText mEmailField;
     private FirebaseAuth mAuth;
     private EditText mPasswordField;
@@ -52,6 +60,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
 
         SignInButton googleButton;
 
+        database = FirebaseFirestore.getInstance();
         // [START initialize_auth]
         // Initialize Firebase Auth
         FirebaseApp.initializeApp(this);
@@ -160,6 +169,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
+                            addUserToDb(user);
                             finish();
                         } else {
                             // If sign in fails, display a message to the user.
@@ -170,6 +180,24 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                         }
 
                         // ...
+                    }
+                });
+    }
+
+    private void addUserToDb(FirebaseUser user)
+    {
+        Map<String, Object> userData = new HashMap<String, Object>();
+        userData.put(user.getUid(), user.getEmail());
+        database.collection("users").add(userData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+            }
+        })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error loading document", e);
                     }
                 });
     }

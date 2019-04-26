@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,6 +31,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements PlanAdapter.OnListItemClickListener {
 
     private static final String TAG = "Main";
+    FirebaseFirestore database;
     Toolbar myToolbar;
     RecyclerView mPlanList;
     RecyclerView.Adapter mPlanAdapter;
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         setContentView(R.layout.activity_main);
 
         mPlans = getMockData();
+
+        database = FirebaseFirestore.getInstance();
 
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);

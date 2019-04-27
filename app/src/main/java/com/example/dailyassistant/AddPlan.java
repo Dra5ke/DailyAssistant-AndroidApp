@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -54,6 +55,13 @@ public class AddPlan extends AppCompatActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String title = titleText.getText().toString();
+                String description = descriptionText.getText().toString();
+                if(title.trim().isEmpty() || description.trim().isEmpty())
+                {
+                    Toast.makeText(AddPlan.this, "Please insert a title and description", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);

@@ -19,11 +19,15 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
+import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,10 +36,13 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
     private static final String TAG = "Main";
     FirebaseFirestore database;
+    CollectionReference plansReference;
     Toolbar myToolbar;
     RecyclerView mPlanList;
     RecyclerView.Adapter mPlanAdapter;
+    PlanFirebaseAdapter planAdapter;
     ArrayList<Plan> mPlans;
+
     int list_item_index;
     private final int ADD_REQUEST_CODE = 5151;
     private final int EDIT_REQUEST_CODE = 5252;
@@ -45,17 +52,39 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPlans = getMockData();
 
-        database = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(MainActivity.this, Login.class);
+            startActivity(intent);
+        } else {
+            setUpFireStore();
+            setUpToolbar();
+            setUpRecyclerView();
 
-        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(MainActivity.this, AddPlan.class);
+                    startActivityForResult(intent, ADD_REQUEST_CODE);
+                }
+            });
+        }
+    }
 
-        mPlanList =findViewById(R.id.rv);
+    private void setUpRecyclerView() {
+        Query query = plansReference.orderBy("year", Query.Direction.ASCENDING)
+                .orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
+
+        FirestoreRecyclerOptions<Plan> options = new FirestoreRecyclerOptions.Builder<Plan>()
+                .setQuery(query, Plan.class).build();
+
+        planAdapter = new PlanFirebaseAdapter(options);
+
+        mPlanList = findViewById(R.id.rv);
         mPlanList.hasFixedSize();
         mPlanList.setLayoutManager(new LinearLayoutManager(this));
-        mPlanAdapter = new PlanAdapter(mPlans, this);
 
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
@@ -65,44 +94,53 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-                final int swipedItemIndex = (int) viewHolder.getAdapterPosition();
-                mPlans.remove(swipedItemIndex);
-                mPlanAdapter.notifyItemRemoved(swipedItemIndex);
+                final String swipedItemIndex = Integer.toString(viewHolder.getAdapterPosition());
+                plansReference.document(swipedItemIndex).delete()
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Log.d(TAG, "Delete plan success");
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.d(TAG, "Delete plan error:" + e.getLocalizedMessage());
+                            }
+                        });
             }
         }).attachToRecyclerView(mPlanList);
+        mPlanList.setAdapter(planAdapter);
 
-        mPlanList.setAdapter(mPlanAdapter);
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddPlan.class);
-                startActivityForResult(intent, ADD_REQUEST_CODE);
-            }
-        });
+    private void setUpToolbar() {
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+    }
+
+    private void setUpFireStore() {
+        database = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        plansReference = database.collection("users").document(user.getUid()).collection("plans");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(requestCode == ADD_REQUEST_CODE)
-        {
-            if(resultCode == RESULT_OK)
-            {
+        if (requestCode == ADD_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 mPlans.add(new Plan(data.getExtras().getString("NEW_PLAN_TITLE"),
                         data.getExtras().getString("NEW_PLAN_DESCRIPTION"), data.getExtras().getInt("NEW_PLAN_YEAR"),
                         data.getExtras().getInt("NEW_PLAN_MONTH"), data.getExtras().getInt("NEW_PLAN_DAY")));
                 mPlanAdapter.notifyDataSetChanged();
             }
-        } else if(requestCode == EDIT_REQUEST_CODE)
-        {
-            if(resultCode == RESULT_OK)
-            {
+        } else if (requestCode == EDIT_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 int index = data.getExtras().getInt("EDIT_PLAN_INDEX");
                 String newTitle = data.getExtras().getString("EDIT_PLAN_TITLE");
                 String newDescription = data.getExtras().getString("EDIT_PLAN_DESCRIPTION");
-                if(!newTitle.equals("")) mPlans.get(index).setTitle(newTitle);
-                if(!newDescription.equals("")) mPlans.get(index).setDescription(newDescription);
+                if (!newTitle.equals("")) mPlans.get(index).setTitle(newTitle);
+                if (!newDescription.equals("")) mPlans.get(index).setDescription(newDescription);
                 mPlans.get(index).setDay(data.getExtras().getInt("EDIT_PLAN_DAY"));
                 mPlans.get(index).setMonth(data.getExtras().getInt("EDIT_PLAN_MONTH"));
                 mPlans.get(index).setYear(data.getExtras().getInt("EDIT_PLAN_YEAR"));
@@ -122,8 +160,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId())
-        {
+        switch (item.getItemId()) {
             case R.id.action_favourite:
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(MainActivity.this, Login.class);
@@ -141,13 +178,13 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     @Override
     public void onStart() {
         super.onStart();
+        planAdapter.startListening();
+    }
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null)
-        {
-            Intent intent = new Intent(MainActivity.this, Login.class);
-            startActivity(intent);
-        }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        planAdapter.stopListening();
     }
 
     public ArrayList<Plan> getMockData() {
@@ -186,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         int month = calendar.get(Calendar.MONTH);
         int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener ,year, month, dayOfMonth);
+        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener, year, month, dayOfMonth);
 
         datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -196,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
             mPlans.get(list_item_index).setDay(dayOfMonth);
-            mPlans.get(list_item_index).setMonth(month+1);
+            mPlans.get(list_item_index).setMonth(month + 1);
             mPlans.get(list_item_index).setYear(year);
             mPlanAdapter.notifyItemChanged(list_item_index);
         }

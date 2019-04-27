@@ -16,6 +16,10 @@ public class Plan {
         Day = day;
     }
 
+    public Plan() {
+        //No argument constructor needed for firestore
+    }
+
     public String getDateString() {
         String date;
         String dayS;

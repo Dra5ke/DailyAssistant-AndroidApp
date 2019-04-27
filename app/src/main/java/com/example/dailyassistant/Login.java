@@ -188,10 +188,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
     {
         Map<String, Object> userData = new HashMap<String, Object>();
         userData.put(user.getUid(), user.getEmail());
-        database.collection("users").add(userData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        database.collection("users").document(user.getUid()).set(userData).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
-            public void onSuccess(DocumentReference documentReference) {
-                Log.d(TAG, "DocumentSnapshot written with ID: " + documentReference.getId());
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Added new user");
             }
         })
                 .addOnFailureListener(new OnFailureListener() {

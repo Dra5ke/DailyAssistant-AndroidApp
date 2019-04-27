@@ -30,6 +30,7 @@
                 android:layout_weight="1"
                 android:gravity="center|start"
                 android:text="Title"
+                android:maxLines="1"
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
@@ -41,6 +42,7 @@
                 android:layout_weight="1"
                 android:gravity="center|start"
                 android:text="Description of plan/schedule"
+                android:maxLines="3"
                 android:textSize="14sp" />
         </LinearLayout>
 

@@ -92,20 +92,7 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
 
             @Override
             public void onSwiped(final RecyclerView.ViewHolder viewHolder, int direction) {
-                final String swipedItemIndex = Integer.toString(viewHolder.getAdapterPosition());
-                plansReference.document(swipedItemIndex).delete()
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d(TAG, "Delete plan success");
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.d(TAG, "Delete plan error:" + e.getLocalizedMessage());
-                            }
-                        });
+                planAdapter.deleteItem(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(mPlanList);
         mPlanList.setAdapter(planAdapter);
@@ -127,10 +114,10 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == ADD_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                mPlans.add(new Plan(data.getExtras().getString("NEW_PLAN_TITLE"),
+
+                plansReference.add(new Plan(data.getExtras().getString("NEW_PLAN_TITLE"),
                         data.getExtras().getString("NEW_PLAN_DESCRIPTION"), data.getExtras().getInt("NEW_PLAN_YEAR"),
                         data.getExtras().getInt("NEW_PLAN_MONTH"), data.getExtras().getInt("NEW_PLAN_DAY")));
-                mPlanAdapter.notifyDataSetChanged();
             }
         } else if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {

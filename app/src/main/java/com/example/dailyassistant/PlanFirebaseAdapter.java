@@ -32,6 +32,10 @@ public class PlanFirebaseAdapter extends FirestoreRecyclerAdapter<Plan, PlanFire
         return new PlanViewHolder(v);
     }
 
+    public void deleteItem(int position) {
+        getSnapshots().getSnapshot(position).getReference().delete();
+    }
+
     class PlanViewHolder extends RecyclerView.ViewHolder {
 
         TextView Title;

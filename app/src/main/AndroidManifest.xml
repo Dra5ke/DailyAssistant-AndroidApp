@@ -12,7 +12,8 @@
         <activity android:name=".EditPlan"></activity>
         <activity android:name=".AddPlan" />
         <activity android:name=".Login"></activity>
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

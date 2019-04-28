@@ -38,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     Toolbar myToolbar;
     RecyclerView mPlanList;
     PlanFirebaseAdapter planAdapter;
-    ArrayList<Plan> mPlans;
 
-    int list_item_index;
+    //auxiliary used because in the onDateSetListener there is no access to the snapshot
+    DocumentSnapshot docSnap;
     private final int ADD_REQUEST_CODE = 5151;
     private final int EDIT_REQUEST_CODE = 5252;
 
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
 
-                list_item_index = position;
+                docSnap = documentSnapshot;
                 Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);
                 int month = calendar.get(Calendar.MONTH);
@@ -125,16 +125,17 @@ public class MainActivity extends AppCompatActivity {
         mPlanList.setAdapter(planAdapter);
     }
 
-    private void setUpToolbar() {
-        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-    }
+    private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
-    private void setUpFireStore() {
-        database = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        plansReference = database.collection("users").document(user.getUid()).collection("plans");
-    }
+            Plan plan = docSnap.toObject(Plan.class);
+            plan.setDay(dayOfMonth);
+            plan.setMonth(month + 1);
+            plan.setYear(year);
+            database.document(docSnap.getReference().getPath()).set(plan);
+        }
+    };
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -203,32 +204,14 @@ public class MainActivity extends AppCompatActivity {
         planAdapter.stopListening();
     }
 
-    public ArrayList<Plan> getMockData() {
-        ArrayList<Plan> plans = new ArrayList<>();
-
-        plans.add(new Plan("Mom gift", "Pick up gift from the shop", 2019, 4, 26));
-        plans.add(new Plan("Client meeting", "Meeting with ECorp representative", 2019, 4, 30));
-        plans.add(new Plan("Review session", "Team review, prepare presentation", 2019, 5, 10));
-        plans.add(new Plan("Boss inspection", "Prepare summary of progress on work", 2019, 5, 15));
-        plans.add(new Plan("Trip prep", "Pack for the Weekend Trip", 2019, 5, 17));
-        plans.add(new Plan("Flight Check In", "Make Check in for everyone", 2019, 5, 18));
-        plans.add(new Plan("Return Check In", "Check In the return flight", 2019, 5, 19));
-        plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspectionfdghjmgfdsfghjbhvgcfxghvjbvhgcfxgcvhngc", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspection", 2019, 5, 26));
-        plans.add(new Plan("Syn", "Go for Syn inspectionasadasdsasadsadsadasdsasadsadsaddasdadassadsadsadsadadssadsaddassadsasasadsasadsadsadsadsadsasadsadsaddasasdsadsadsdsadsadadsdsdssadsadsadsd", 2019, 5, 26));
-
-        return plans;
+    private void setUpToolbar() {
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
-    private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-            mPlans.get(list_item_index).setDay(dayOfMonth);
-            mPlans.get(list_item_index).setMonth(month + 1);
-            mPlans.get(list_item_index).setYear(year);
-
-        }
-    };
+    private void setUpFireStore() {
+        database = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        plansReference = database.collection("users").document(user.getUid()).collection("plans");
+    }
 }

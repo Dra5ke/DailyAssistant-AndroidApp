@@ -98,10 +98,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        if (!task.isSuccessful()) {
-
-                        }
                     }
                 });
     }
@@ -138,8 +134,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 });
     }
@@ -208,8 +202,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(a);
     }
-
-
 
     // Google Sign-In still throws Exception: 10
     // Disabled for the Hand-In because I couldn't figure out how to fix it

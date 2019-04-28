@@ -84,7 +84,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, ADD_REQUEST_CODE);
                 }
             });
-
     }
 
     private void setUpToolbar() {

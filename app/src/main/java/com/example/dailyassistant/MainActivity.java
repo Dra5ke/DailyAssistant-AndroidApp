@@ -61,13 +61,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //Go to Login if user is not authenticated
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
             Log.d(TAG, "User null");
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
-        }else {
+        } //else Setup everything then start listener on adapter
+        else {
             Log.d(TAG, "User already logged in");
             setUpFireStore();
             setUpToolbar();
@@ -86,7 +87,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setUpToolbar() {
+        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+    }
+
+    private void setUpFireStore() {
+        database = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //Every user document is Identified by thteir FirebaseAuth ID
+        // The user document holds a reference to a plans collection
+        plansReference = database.collection("users").document(user.getUid()).collection("plans");
+    }
+
     private void setUpRecyclerView() {
+        //Query to get all Plans Ordered by their Due Dates
         Query query = plansReference.orderBy("year", Query.Direction.ASCENDING)
                 .orderBy("month", Query.Direction.ASCENDING).orderBy("day", Query.Direction.ASCENDING);
 
@@ -98,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         mPlanList = findViewById(R.id.rv);
         mPlanList.hasFixedSize();
         mPlanList.setLayoutManager(new LinearLayoutManager(this));
-
+        //Delete Plan on Swipe left/right
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT | ItemTouchHelper.LEFT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
@@ -112,6 +127,7 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(mPlanList);
 
         planAdapter.setOnItemClickListener(new PlanFirebaseAdapter.OnListItemClickListener() {
+            //Go to AddPlan
             @Override
             public void onListItemClick(DocumentSnapshot documentSnapshot, int position) {
                 String docPath = documentSnapshot.getReference().getPath();
@@ -121,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(position));
                 startActivityForResult(intent, EDIT_REQUEST_CODE);
             }
-
+            //Open CalendarDialog for quick date change
             @Override
             public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
 
@@ -132,10 +148,9 @@ public class MainActivity extends AppCompatActivity {
                 int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener, year, month, dayOfMonth);
-
+                //The code for modifying the DB document is in the mDateSetListener declaration below
                 datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
                 datePickerDialog.show();
-
             }
         });
         mPlanList.setAdapter(planAdapter);
@@ -144,20 +159,22 @@ public class MainActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
+            //Use Snapshot to get the Object and modify it
             Plan plan = docSnap.toObject(Plan.class);
             plan.setDay(dayOfMonth);
             plan.setMonth(month + 1);
             plan.setYear(year);
+            //Pass the Object to the set method in order to Overwrite on the document
             database.document(docSnap.getReference().getPath()).set(plan);
         }
     };
 
+    //Handle what AddPlan and EditPlan returns
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == ADD_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-
+                //Get the Extras, create a new Plan then add it to the DB using the Reference
                 plansReference.add(new Plan(data.getExtras().getString("NEW_PLAN_TITLE"),
                         data.getExtras().getString("NEW_PLAN_DESCRIPTION"), data.getExtras().getInt("NEW_PLAN_YEAR"),
                         data.getExtras().getInt("NEW_PLAN_MONTH"), data.getExtras().getInt("NEW_PLAN_DAY")));
@@ -165,19 +182,19 @@ public class MainActivity extends AppCompatActivity {
         } else if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String docPath = data.getExtras().getString("DOC_PATH");
-                int position = data.getExtras().getInt("EDIT_ITEM_INDEX");
-                Log.d(TAG, "Activity result index: " + position);
                 String title = data.getExtras().getString("EDIT_PLAN_TITLE");
                 String description = data.getExtras().getString("EDIT_PLAN_DESCRIPTION");
                 //I wanted to make it so that if the title/desc fields are empty the old ones are kept
                 //get methods throw NullPointerException
+//                int position = data.getExtras().getInt("EDIT_ITEM_INDEX");
+//                Log.d(TAG, "Activity result index: " + position);
 //                if(title.trim().isEmpty()) title = planAdapter.getSnapshots().get(position).getTitle();
 //                if(description.trim().isEmpty()) description = planAdapter.getSnapshots().get(position).getDescription();
 
-                Plan edittedPlan = new Plan(title, description, data.getExtras().getInt("EDIT_PLAN_YEAR"),
+                Plan editedPlan = new Plan(title, description, data.getExtras().getInt("EDIT_PLAN_YEAR"),
                         data.getExtras().getInt("EDIT_PLAN_MONTH"), data.getExtras().getInt("EDIT_PLAN_DAY"));
-
-                database.document(docPath).set(edittedPlan);
+                //Use set to overwrite
+                database.document(docPath).set(editedPlan);
             }
         }
     }
@@ -195,16 +212,16 @@ public class MainActivity extends AppCompatActivity {
 
         switch (item.getItemId()) {
             case R.id.action_favourite:
+                //SignOut the User and take them to the Login activity
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(MainActivity.this, Login.class);
                 startActivity(intent);
                 return true;
 
             case R.id.later:
-
+            //Get quote ^^ Procastinator ID sorry :)
                 GetQuoteAsync task = new GetQuoteAsync();
                 task.execute(QUOTE_URL);
-
                 return true;
 
             default:
@@ -212,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //The class below and the 2 methods under GetQuoteAsync are for consuming the QotD API
     private class GetQuoteAsync extends AsyncTask<String, Void, String> {
         @Override
         protected String doInBackground(String... strings) {
@@ -288,7 +306,13 @@ public class MainActivity extends AppCompatActivity {
         return output.toString();
     }
 
-//    @Override
+    //Had some issues with the SignOut Button and the adapter listener
+    //Sometimes hitting the signout button would make the FirebaseAuth user null
+    //however, the code for starting the listener would still run and it would throw a NullPointerException
+    //which would crash the app. Right now it works with the startListening() in onCreate. Should find a good place to call
+    //stopListening() but later cause right now it works ( 28Apr 18:36 :D ) so I'm not touching it
+
+    //    @Override
 //    public void onStart() {
 //        super.onStart();
 //        planAdapter.startListening();
@@ -311,15 +335,4 @@ public class MainActivity extends AppCompatActivity {
 //        super.onStop();
 //        planAdapter.stopListening();
 //    }
-
-    private void setUpToolbar() {
-        myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-    }
-
-    private void setUpFireStore() {
-        database = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        plansReference = database.collection("users").document(user.getUid()).collection("plans");
-    }
 }

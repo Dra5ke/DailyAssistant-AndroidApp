@@ -82,15 +82,17 @@
             android:backgroundTint="@color/colorPrimary"
             android:textColor="@color/colorAccent"/>
 
-        <com.google.android.gms.common.SignInButton
 
-            android:id="@+id/button_google_sign_in"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:paddingEnd="10dp"
-            android:paddingStart="10dp"
-            android:textAlignment="center" />
+        <!--Google sign in disabled for Hand-In, see end of Login Activity-->
+        <!--<com.google.android.gms.common.SignInButton-->
+
+            <!--android:id="@+id/button_google_sign_in"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center"-->
+            <!--android:paddingEnd="10dp"-->
+            <!--android:paddingStart="10dp"-->
+            <!--android:textAlignment="center" />-->
 
     </LinearLayout>
 

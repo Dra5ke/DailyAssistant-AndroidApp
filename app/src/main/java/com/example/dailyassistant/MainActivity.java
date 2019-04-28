@@ -2,7 +2,6 @@ package com.example.dailyassistant;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,11 +17,11 @@ import android.view.View;
 import android.widget.DatePicker;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -95,8 +93,22 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
                 planAdapter.deleteItem(viewHolder.getAdapterPosition());
             }
         }).attachToRecyclerView(mPlanList);
-        mPlanList.setAdapter(planAdapter);
 
+        planAdapter.setOnItemClickListener(new PlanFirebaseAdapter.OnListItemClickListener() {
+            @Override
+            public void onListItemClick(DocumentSnapshot documentSnapshot, int position) {
+                String docPath = documentSnapshot.getReference().getPath();
+                Intent intent = new Intent(MainActivity.this, EditPlan.class);
+                intent.putExtra("DOC_PATH", docPath);
+                startActivityForResult(intent, EDIT_REQUEST_CODE);
+            }
+
+            @Override
+            public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
+
+            }
+        });
+        mPlanList.setAdapter(planAdapter);
     }
 
     private void setUpToolbar() {
@@ -121,15 +133,13 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
             }
         } else if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                int index = data.getExtras().getInt("EDIT_PLAN_INDEX");
-                String newTitle = data.getExtras().getString("EDIT_PLAN_TITLE");
-                String newDescription = data.getExtras().getString("EDIT_PLAN_DESCRIPTION");
-                if (!newTitle.equals("")) mPlans.get(index).setTitle(newTitle);
-                if (!newDescription.equals("")) mPlans.get(index).setDescription(newDescription);
-                mPlans.get(index).setDay(data.getExtras().getInt("EDIT_PLAN_DAY"));
-                mPlans.get(index).setMonth(data.getExtras().getInt("EDIT_PLAN_MONTH"));
-                mPlans.get(index).setYear(data.getExtras().getInt("EDIT_PLAN_YEAR"));
-                mPlanAdapter.notifyItemChanged(index);
+                String docPath = data.getExtras().getString("DOC_PATH");
+
+                Plan edittedPlan = new Plan(data.getExtras().getString("EDIT_PLAN_TITLE"),
+                        data.getExtras().getString("EDIT_PLAN_DESCRIPTION"), data.getExtras().getInt("EDIT_PLAN_YEAR"),
+                        data.getExtras().getInt("EDIT_PLAN_MONTH"), data.getExtras().getInt("EDIT_PLAN_DAY"));
+
+                plansReference.document(docPath).set(edittedPlan);
             }
         }
     }

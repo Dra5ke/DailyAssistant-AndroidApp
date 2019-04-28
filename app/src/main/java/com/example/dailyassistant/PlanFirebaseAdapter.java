@@ -10,8 +10,11 @@ import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.firebase.firestore.DocumentSnapshot;
 
 public class PlanFirebaseAdapter extends FirestoreRecyclerAdapter<Plan, PlanFirebaseAdapter.PlanViewHolder> {
+
+    private OnListItemClickListener mOnListItemClickListener;
 
     public PlanFirebaseAdapter(@NonNull FirestoreRecyclerOptions<Plan> options) {
         super(options);
@@ -36,7 +39,7 @@ public class PlanFirebaseAdapter extends FirestoreRecyclerAdapter<Plan, PlanFire
         getSnapshots().getSnapshot(position).getReference().delete();
     }
 
-    class PlanViewHolder extends RecyclerView.ViewHolder {
+    class PlanViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView Title;
         TextView Description;
@@ -49,6 +52,39 @@ public class PlanFirebaseAdapter extends FirestoreRecyclerAdapter<Plan, PlanFire
             Description = itemView.findViewById(R.id.tv_description);
             editDate = itemView.findViewById(R.id.tv_editDate);
             date = itemView.findViewById(R.id.tv_date);
+
+            editDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(mOnListItemClickListener != null)
+                    {
+                        int position = getAdapterPosition();
+                        if(position != RecyclerView.NO_POSITION) {
+                            mOnListItemClickListener.onCalendarClick(getSnapshots().getSnapshot(position), position);
+                        }
+                    }
+                }
+            });
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            if(position != RecyclerView.NO_POSITION && mOnListItemClickListener != null)
+            {
+                mOnListItemClickListener.onListItemClick(getSnapshots().getSnapshot(position), position);
+            }
         }
     }
+
+    public interface OnListItemClickListener {
+        void onListItemClick(DocumentSnapshot documentSnapshot, int position);
+        void onCalendarClick(DocumentSnapshot documentSnapshot, int position);
+    }
+
+    public void setOnItemClickListener(OnListItemClickListener listener) {
+        this.mOnListItemClickListener = listener;
+    }
+
 }

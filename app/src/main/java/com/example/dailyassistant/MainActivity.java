@@ -83,6 +83,12 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    //Had some issues with the SignOut Button and the adapter listener
+    //Sometimes hitting the signout button would make the FirebaseAuth user null
+    //however, the code for starting the listener would still run and it would throw a NullPointerException
+    //which would crash the app. Right now it works with the startListening() in onResume() along with thte code for setting up
+    //the recycler view
+
     //need to setup the listener and adapter again in order for the live changes to continue after switching activities
     @Override
     protected void onResume() {
@@ -309,12 +315,6 @@ public class MainActivity extends AppCompatActivity {
 
         return output.toString();
     }
-
-    //Had some issues with the SignOut Button and the adapter listener
-    //Sometimes hitting the signout button would make the FirebaseAuth user null
-    //however, the code for starting the listener would still run and it would throw a NullPointerException
-    //which would crash the app. Right now it works with the startListening() in onCreate. Should find a good place to call
-    //stopListening() but later cause right now it works ( 28Apr 18:36 :D ) so I'm not touching it
 
     //    @Override
 //    public void onStart() {

@@ -156,6 +156,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
                         Log.w(TAG, "Error loading document", e);
                     }
                 });
+        database.collection("users").document(user.getUid()).collection("plans");
     }
 
     //Checks content in TextFields to prevent the SignIn and CreateAccount methods from crashing

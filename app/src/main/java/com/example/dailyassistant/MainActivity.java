@@ -68,27 +68,29 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
         } //else Setup everything then start listener on adapter
-        else {
-            Log.d(TAG, "User already logged in");
-            setUpFireStore();
-            setUpToolbar();
 
-        }
+        Log.d(TAG, "User already logged in");
+        setUpFireStore();
+        setUpToolbar();
 
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-            fab.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(MainActivity.this, AddPlan.class);
-                    startActivityForResult(intent, ADD_REQUEST_CODE);
-                }
-            });
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddPlan.class);
+                startActivityForResult(intent, ADD_REQUEST_CODE);
+            }
+        });
     }
 
     //need to setup the listener and adapter again in order for the live changes to continue after switching activities
     @Override
     protected void onResume() {
         super.onResume();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        //Every user document is Identified by their FirebaseAuth ID
+        //The user document holds a reference to a plans collection
+        plansReference = database.collection("users").document(user.getUid()).collection("plans");
         setUpRecyclerView();
         planAdapter.startListening();
     }
@@ -100,10 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void setUpFireStore() {
         database = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        //Every user document is Identified by thteir FirebaseAuth ID
-        // The user document holds a reference to a plans collection
-        plansReference = database.collection("users").document(user.getUid()).collection("plans");
     }
 
     private void setUpRecyclerView() {
@@ -143,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, String.valueOf(position));
                 startActivityForResult(intent, EDIT_REQUEST_CODE);
             }
+
             //Open CalendarDialog for quick date change
             @Override
             public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
@@ -224,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.later:
-            //Get quote ^^ Procastinator ID sorry :)
+                //Get quote ^^ Procastinator ID sorry :)
                 GetQuoteAsync task = new GetQuoteAsync();
                 task.execute(QUOTE_URL);
                 return true;

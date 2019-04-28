@@ -10,11 +10,13 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
+import android.widget.Toast;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,14 +30,13 @@ import com.google.firebase.firestore.Query;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity implements PlanAdapter.OnListItemClickListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "Main";
     FirebaseFirestore database;
     CollectionReference plansReference;
     Toolbar myToolbar;
     RecyclerView mPlanList;
-    RecyclerView.Adapter mPlanAdapter;
     PlanFirebaseAdapter planAdapter;
     ArrayList<Plan> mPlans;
 
@@ -100,11 +101,24 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
                 String docPath = documentSnapshot.getReference().getPath();
                 Intent intent = new Intent(MainActivity.this, EditPlan.class);
                 intent.putExtra("DOC_PATH", docPath);
+                intent.putExtra("position", position);
+                Log.d(TAG, String.valueOf(position));
                 startActivityForResult(intent, EDIT_REQUEST_CODE);
             }
 
             @Override
             public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
+
+                list_item_index = position;
+                Calendar calendar = Calendar.getInstance();
+                int year = calendar.get(Calendar.YEAR);
+                int month = calendar.get(Calendar.MONTH);
+                int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener, year, month, dayOfMonth);
+
+                datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                datePickerDialog.show();
 
             }
         });
@@ -134,12 +148,19 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         } else if (requestCode == EDIT_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 String docPath = data.getExtras().getString("DOC_PATH");
+                int position = data.getExtras().getInt("EDIT_ITEM_INDEX");
+                Log.d(TAG, "Activity result index: " + position);
+                String title = data.getExtras().getString("EDIT_PLAN_TITLE");
+                String description = data.getExtras().getString("EDIT_PLAN_DESCRIPTION");
+                //I wanted to make it so that if the title/desc fields are empty the old ones are kept
+                //get methods throw NullPointerException
+//                if(title.trim().isEmpty()) title = planAdapter.getSnapshots().get(position).getTitle();
+//                if(description.trim().isEmpty()) description = planAdapter.getSnapshots().get(position).getDescription();
 
-                Plan edittedPlan = new Plan(data.getExtras().getString("EDIT_PLAN_TITLE"),
-                        data.getExtras().getString("EDIT_PLAN_DESCRIPTION"), data.getExtras().getInt("EDIT_PLAN_YEAR"),
+                Plan edittedPlan = new Plan(title, description, data.getExtras().getInt("EDIT_PLAN_YEAR"),
                         data.getExtras().getInt("EDIT_PLAN_MONTH"), data.getExtras().getInt("EDIT_PLAN_DAY"));
 
-                plansReference.document(docPath).set(edittedPlan);
+                database.document(docPath).set(edittedPlan);
             }
         }
     }
@@ -201,36 +222,13 @@ public class MainActivity extends AppCompatActivity implements PlanAdapter.OnLis
         return plans;
     }
 
-    @Override
-    public void onListItemClick(int clickedItemIndex) {
-
-        Intent intent = new Intent(MainActivity.this, EditPlan.class);
-        intent.putExtra("clickedItemIndex", clickedItemIndex);
-        startActivityForResult(intent, EDIT_REQUEST_CODE);
-    }
-
-    @Override
-    public void onCalendarClick(int clickedItemIndex) {
-
-        list_item_index = clickedItemIndex;
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(MainActivity.this, mDateSetListener, year, month, dayOfMonth);
-
-        datePickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
-        datePickerDialog.show();
-    }
-
     private DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
             mPlans.get(list_item_index).setDay(dayOfMonth);
             mPlans.get(list_item_index).setMonth(month + 1);
             mPlans.get(list_item_index).setYear(year);
-            mPlanAdapter.notifyItemChanged(list_item_index);
+
         }
     };
 }

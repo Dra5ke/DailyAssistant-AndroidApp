@@ -84,8 +84,11 @@ public class EditPlan extends AppCompatActivity {
             {
                 Bundle bundle = getIntent().getExtras();
                 String docPath = bundle.getString("DOC_PATH");
+                int itemIndex = bundle.getInt("position");
+                Log.d(TAG, String.valueOf(itemIndex));
                 Intent returnIntent = new Intent();
-                returnIntent.putExtra("DOC_ID", docPath);
+                returnIntent.putExtra("DOC_PATH", docPath);
+                returnIntent.putExtra("EDIT_ITEM_INDEX", itemIndex);
                 returnIntent.putExtra("EDIT_PLAN_TITLE", titleText.getText().toString());
                 returnIntent.putExtra("EDIT_PLAN_DESCRIPTION", descriptionText.getText().toString());
                 returnIntent.putExtra("EDIT_PLAN_DAY", dayOfMonth);

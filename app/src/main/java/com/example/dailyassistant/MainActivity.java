@@ -339,4 +339,5 @@ public class MainActivity extends AppCompatActivity {
 //        super.onStop();
 //        planAdapter.stopListening();
 //    }
+    // ...
 }

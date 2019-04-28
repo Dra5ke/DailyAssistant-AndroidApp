@@ -72,8 +72,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(TAG, "User already logged in");
             setUpFireStore();
             setUpToolbar();
-            setUpRecyclerView();
-            planAdapter.startListening();
+
         }
 
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -84,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, ADD_REQUEST_CODE);
                 }
             });
+    }
+
+    //need to setup the listener and adapter again in order for the live changes to continue after switching activities
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setUpRecyclerView();
+        planAdapter.startListening();
     }
 
     private void setUpToolbar() {
@@ -139,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
             //Open CalendarDialog for quick date change
             @Override
             public void onCalendarClick(DocumentSnapshot documentSnapshot, int position) {
-
                 docSnap = documentSnapshot;
                 Calendar calendar = Calendar.getInstance();
                 int year = calendar.get(Calendar.YEAR);

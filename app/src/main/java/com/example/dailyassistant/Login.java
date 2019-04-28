@@ -52,7 +52,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener{
         // Fields
         mEmailField = findViewById(R.id.emailText);
         mPasswordField = findViewById(R.id.passwordText);
-
+        updateUI();
         // Click listeners
         findViewById(R.id.login).setOnClickListener(this);
         findViewById(R.id.SignUp).setOnClickListener(this);

@@ -8,7 +8,6 @@
         app:showAsAction="ifRoom"
         />
     <item android:id="@+id/later"
-        android:title="ToDoLater"
-
+        android:title="@string/quote"
         />
 </menu>

@@ -64,12 +64,16 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user == null) {
+            Log.d(TAG, "User null");
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
-        } else {
+        }else {
+            Log.d(TAG, "User already logged in");
             setUpFireStore();
             setUpToolbar();
             setUpRecyclerView();
+            planAdapter.startListening();
+        }
 
             FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
             fab.setOnClickListener(new View.OnClickListener() {
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivityForResult(intent, ADD_REQUEST_CODE);
                 }
             });
-        }
+
     }
 
     private void setUpRecyclerView() {
@@ -284,17 +288,29 @@ public class MainActivity extends AppCompatActivity {
         return output.toString();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        planAdapter.startListening();
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        planAdapter.startListening();
+//    }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        planAdapter.stopListening();
-    }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        planAdapter.startListening();
+//    }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        planAdapter.stopListening();
+//    }
+
+//    @Override
+//    protected void onStop() {
+//        super.onStop();
+//        planAdapter.stopListening();
+//    }
 
     private void setUpToolbar() {
         myToolbar = (Toolbar) findViewById(R.id.my_toolbar);

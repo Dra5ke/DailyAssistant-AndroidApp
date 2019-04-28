@@ -12,4 +12,5 @@
     <string name="cancel">Cancel</string>
     <string name="ok">ok</string>
     <string name="quote">Quote</string>
+    <string name="remember_user_name">Remember user name</string>
 </resources>

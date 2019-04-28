@@ -50,6 +50,14 @@
             />
 
 
+        <CheckBox
+            android:id="@+id/rememberEmail_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:buttonTint="@color/colorAccent"
+            android:text="@string/remember_user_name"
+            android:textColor="@color/colorAccent"/>
+
         <Button
             android:id="@+id/login"
             android:layout_width="match_parent"
